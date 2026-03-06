@@ -204,7 +204,8 @@ RUN apt-get update && apt-get install -y python3-venv\
     && source /opt/venv/bin/activate\
     && pip install -U pip setuptools wheel\
     && pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121\
-    && pip install pybullet
+    && pip install pybullet \
+    && pip install catkin_pkg empy lark-parser
 
 # (optional) Set up a workspace
 WORKDIR /workspace
