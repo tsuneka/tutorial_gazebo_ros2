@@ -1,0 +1,44 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ubuntu2204-cuda121-gui:latest
+    container_name: cuda121_gui_dev
+
+    # GPU有効化（Compose v2 / Docker Desktop で動く書き方）
+    gpus: all
+
+    # Windows + XLaunch(VcXsrv) へのX11転送（TCP）
+    environment:
+      - DISPLAY=${DISPLAY}
+      # OpenGL/Qt系の事故を減らす定番（必要なら有効）
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      - MPLBACKEND=TkAgg
+      - ROS_DOMAIN_ID=20
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - MESA_GL_VERSION_OVERRIDE=3.3
+      - MESA_GLSL_VERSION_OVERRIDE=330
+
+    # 開発用：カレントを /workspace にマウント
+    volumes:
+      - .:/workspace_host
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
+    # 権限で詰まったら一旦これをON（動作確認用）
+    privileged: true
+
+    working_dir: /workspace_host
+    stdin_open: true
+    tty: true
+
+    # 便利: コンテナ側でホスト名 host.docker.internal を確実に引けるようにする（環境によっては不要）
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # 共有メモリ不足で落ちる系（GUI/一部ライブラリ）を回避
+    shm_size: "1gb"
