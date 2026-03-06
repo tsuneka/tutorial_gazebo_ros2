@@ -1,0 +1,25 @@
+running develop
+running egg_info
+creating my_first_ros.egg-info
+writing my_first_ros.egg-info/PKG-INFO
+writing dependency_links to my_first_ros.egg-info/dependency_links.txt
+writing entry points to my_first_ros.egg-info/entry_points.txt
+writing requirements to my_first_ros.egg-info/requires.txt
+writing top-level names to my_first_ros.egg-info/top_level.txt
+writing manifest file 'my_first_ros.egg-info/SOURCES.txt'
+reading manifest file 'my_first_ros.egg-info/SOURCES.txt'
+writing manifest file 'my_first_ros.egg-info/SOURCES.txt'
+running build_ext
+Creating /workspace_host/install/my_first_ros/lib/python3.10/site-packages/my-first-ros.egg-link (link to .)
+Installing simple_listener script to /workspace_host/install/my_first_ros/lib/my_first_ros
+Installing simple_talker script to /workspace_host/install/my_first_ros/lib/my_first_ros
+Installing tb3_square_driver script to /workspace_host/install/my_first_ros/lib/my_first_ros
+Installing tb3_stop script to /workspace_host/install/my_first_ros/lib/my_first_ros
+
+Installed /workspace_host/build/my_first_ros
+running symlink_data
+creating /workspace_host/install/my_first_ros/share/ament_index
+creating /workspace_host/install/my_first_ros/share/ament_index/resource_index
+creating /workspace_host/install/my_first_ros/share/ament_index/resource_index/packages
+symbolically linking /workspace_host/build/my_first_ros/resource/my_first_ros -> /workspace_host/install/my_first_ros/share/ament_index/resource_index/packages
+symbolically linking /workspace_host/build/my_first_ros/package.xml -> /workspace_host/install/my_first_ros/share/my_first_ros

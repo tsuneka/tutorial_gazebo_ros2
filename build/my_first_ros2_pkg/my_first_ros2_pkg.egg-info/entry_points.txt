@@ -1,0 +1,6 @@
+[console_scripts]
+simple_listener = my_first_ros.simple_listener:main
+simple_talker = my_first_ros.simple_talker:main
+tb3_square_driver = my_first_ros.tb3_square_driver:main
+tb3_stop = my_first_ros.tb3_stop:main
+
