@@ -2,7 +2,7 @@
 ## Git clone and build docker environment for gazebo humble
 If you type the command below, you will enter the Docker container and be in the workspace directory.
 ```
-git clone https://github.com/tsuneka/tutorial_gazebo_ros2.git
+git clone -b for_cpp https://github.com/tsuneka/tutorial_gazebo_ros2.git
 cd tutorial_gazebo_ros2/
 sudo docker compose build
 sudo docker compose run dev
@@ -26,9 +26,7 @@ ros2 pkg create my_first_ros
 # 余裕があれば，後で別のワークスペースで　ros2 pkg create my_first_ros --build-type ament_cmake --dependencies rclcpp std_msgs geometry_msgs　と打って，package.xmlを見てみよう，何かが違うはず．．．
 # パッケージが作れたか確認しよう
 ls　# my_first_ros ファイルがあれば問題なし！
-cd cd my_first_ros/src/
-<!-- # おまじない
-rm -r my_first_ros/ -->
+cd my_first_ros/src/
 # ほかの人が作ったソースコードをもらってみよう．
 git clone https://github.com/tsuneka/my_first_ros.git
 ```
@@ -104,7 +102,8 @@ source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 source install/setup.bash
 ```
-実際にROS2の動作確認をしてみよう
+実際にROS2の動作確認をしてみよう.
+
 Terminal 1:
 ```
 cd /workspace_host/ros2_ws
@@ -125,3 +124,95 @@ ros2 topic list
 ros2 topic echo
 ```
 Publish: "Hello ROS 2! count=0"　Receive: "Hello ROS 2! count=0" がディスプレイに出てくるか確認してね
+## Create msg package
+msgパッケージを作ろう
+```
+cd /workspace_host/ros2_ws/src/
+ros2 pkg create my_first_ros_interfaces --build-type ament_cmake
+# msgファイルの作成
+mkdir msg
+cd msg/
+gedit RobotCommand.msg
+```
+float32 linear
+float32 angular
+```
+
+```
+package.xml に下記を追加
+```
+<buildtool_depend>ament_cmake</buildtool_depend>
+
+<build_depend>rosidl_default_generators</build_depend>
+<exec_depend>rosidl_default_runtime</exec_depend>
+
+<member_of_group>rosidl_interface_packages</member_of_group>
+```
+CMakeLists.txt
+```
+cmake_minimum_required(VERSION 3.8)
+project(my_first_ros_interfaces)
+
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/RobotCommand.msg"
+)
+
+ament_export_dependencies(rosidl_default_runtime)
+
+ament_package()
+```
+次にC++ノードのmy_first_ros側のpackage.xmlとCMakeLists.txtを編集しよう
+```
+# package.xml
+<depend>my_first_ros_interfaces</depend>
+# CMakeLists.txt
+find_package(my_first_ros_interfaces REQUIRED)
+
+ament_target_dependencies(tb3_square_driver
+  rclcpp
+  geometry_msgs
+  my_first_ros_interfaces
+)
+```
+## Create launch file
+launchファイルを作ろう
+```
+cd /workspace_host/ros2_ws/src/
+ros2 pkg create my_first_ros_bringup \
+--build-type ament_python
+mkdir launch
+gedit gazebo_tb3.launch.py
+```
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import ExecuteProcess
+
+def generate_launch_description():
+
+    gazebo = ExecuteProcess(
+        cmd=['ros2','launch','turtlebot3_gazebo','turtlebot3_world.launch.py'],
+        output='screen'
+    )
+
+    square_driver = Node(
+        package='my_first_ros',
+        executable='tb3_square_driver',
+        output='screen'
+    )
+
+    return LaunchDescription([
+        gazebo,
+        square_driver
+    ])
+```
+```
+## Build & execute 
+```
+cd cd /workspace_host/ros2_ws/
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch my_first_ros_bringup gazebo_tb3.launch.py
+```
